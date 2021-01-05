@@ -86,7 +86,18 @@ class SNWS
                 }))
             }
 
-            app.listen(80)
+
+
+		const credentials =
+                {
+                    key: fs.readFileSync(`/usr/local/etc/letsencrypt/live/api.programer.com.br/privkey.pem`),
+                    cert: fs.readFileSync(`/usr/local/etc/letsencrypt/live/api.programer.com.br/fullchain.pem`)
+                }
+
+
+		const server = https.createServer(credentials, app)
+
+            server.listen(443)
         }
         catch ( e )
         {
