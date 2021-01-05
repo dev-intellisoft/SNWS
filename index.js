@@ -97,10 +97,11 @@ class SNWS
             //
             const server = https.createServer({}, app)
 
-            server.addContext(`api.programer.com.br`, {
-                key: fs.readFileSync(`/usr/local/etc/letsencrypt/live/api.programer.com.br/privkey.pem`),
-                cert: fs.readFileSync(`/usr/local/etc/letsencrypt/live/api.programer.com.br/fullchain.pem`)
-            })
+            for ( let i = 0; i < hosts.length; i ++ )
+                server.addContext(hosts[i].host, {
+                    key: fs.readFileSync(hosts[i].ssl_key),
+                    cert: fs.readFileSync(hosts[i].ssl_cert)
+                })
 
             server.listen(443)
         }
