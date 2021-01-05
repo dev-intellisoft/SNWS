@@ -1,0 +1,12 @@
+[
+  {
+    "host":"localhost",
+    "APP_PATH":"/Users/wellington/Developer/intellisoft/api",
+    "index":"Index",
+    "ssl_key":"/usr/local/etc/letsencrypt/live/apiv4.ulist.app/privkey.pem",
+    "ssl_cert":"/usr/local/etc/letsencrypt/live/apiv4.ulist.app/fullchain.pem"
+  },
+  {
+    "host":"test"
+  }
+]
