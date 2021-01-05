@@ -1,12 +1,16 @@
 [
   {
-    "host":"localhost",
-    "APP_PATH":"/Users/wellington/Developer/intellisoft/api",
+    "host":"domain1.com",
+    "APP_PATH":"/var/www/domain1",
     "index":"Index",
-    "ssl_key":"/usr/local/etc/letsencrypt/live/apiv4.ulist.app/privkey.pem",
-    "ssl_cert":"/usr/local/etc/letsencrypt/live/apiv4.ulist.app/fullchain.pem"
+    "ssl_key":"/usr/local/etc/letsencrypt/live/domain1.com/privkey.pem",
+    "ssl_cert":"/usr/local/etc/letsencrypt/live/domain1.com/fullchain.pem"
   },
   {
-    "host":"test"
-  }
+    "host":"domain2.com",
+    "APP_PATH":"/var/www/domain2",
+    "index":"Index",
+    "ssl_key":"/usr/local/etc/letsencrypt/live/domain2.com/privkey.pem",
+    "ssl_cert":"/usr/local/etc/letsencrypt/live/domain2.com/fullchain.pem"
+  },
 ]
