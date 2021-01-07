@@ -10,6 +10,7 @@ import mustache from  'mustache'
 import fs from 'fs'
 
 const app = new express()
+const _app = new express()
 
 class SNWS
 {
@@ -87,21 +88,19 @@ class SNWS
             }
 
 
-
-            // const credentials =
-            // {
-            //     key: fs.readFileSync(`/usr/local/etc/letsencrypt/live/api.programer.com.br/privkey.pem`),
-            //     cert: fs.readFileSync(`/usr/local/etc/letsencrypt/live/api.programer.com.br/fullchain.pem`)
-            // }
-            //
-            //
             const server = https.createServer({}, app)
 
             for ( let i = 0; i < hosts.length; i ++ )
+	    {
                 server.addContext(hosts[i].host, {
                     key: fs.readFileSync(hosts[i].ssl_key),
                     cert: fs.readFileSync(hosts[i].ssl_cert)
                 })
+	    }
+
+	    _app.all(`*`, (req, res) => res.redirect("https://" + req.host + req.url))
+
+	    _app.listen(80)
 
             server.listen(443)
         }
