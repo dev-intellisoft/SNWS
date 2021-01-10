@@ -80,15 +80,15 @@ class SNWS
                         res.sendFile(`${global.APP_PATH}/index.html`)
                     }))
                 }
-                else
-                {
-                    // global.APP_PATH = `${process.env.PWD}/www`
-                    app.use(vhost(hosts[i].host, async (req, res) =>
-                    {
-                        res.setHeader('Content-Type', 'text/plain')
-                        res.end(`No index file!`)
-                    }))
-                }
+                // else
+                // {
+                //     // global.APP_PATH = `${process.env.PWD}/www`
+                //     app.use(vhost(hosts[i].host, async (req, res) =>
+                //     {
+                //         res.setHeader('Content-Type', 'text/plain')
+                //         res.end(`No index file!`)
+                //     }))
+                // }
             }
 
             if ( process.env.ssl === `true` )
