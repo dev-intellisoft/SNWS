@@ -82,7 +82,7 @@ class SNWS
                 }
                 else
                 {
-                    global.APP_PATH = `${process.env.PWD}/www`
+                    // global.APP_PATH = `${process.env.PWD}/www`
                     app.use(vhost(hosts[i].host, async (req, res) =>
                     {
                         res.setHeader('Content-Type', 'text/plain')
