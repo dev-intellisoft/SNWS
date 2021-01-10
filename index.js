@@ -22,6 +22,7 @@ class SNWS
     {
         this.init()
         this.sockets = []
+        this.hosts = {}
     }
 
     async get_vhosts ()
@@ -59,8 +60,10 @@ class SNWS
             for ( let i = 0; i < hosts.length; i ++ )
             {
                 global.APP_PATH = hosts[i].APP_PATH || `${process.env.PWD}/www`
+                this.hosts[hosts[i].host] = hosts[i]
                 if ( await fs.existsSync(`${global.APP_PATH}/index.js`) )
                 {
+                    global.APP_PATH = this.hosts[hosts[i].host].APP_PATH || `${process.env.PWD}/www`
                     let { Index, Socket } = await import(`${global.APP_PATH}/index.js`)
                     app.use(vhost(hosts[i].host, async (req, res) =>
                     {
@@ -72,6 +75,7 @@ class SNWS
                 }
                 else if ( await fs.existsSync(`${global.APP_PATH}/index.html`) )
                 {
+                    global.APP_PATH = this.hosts[hosts[i].host].APP_PATH || `${process.env.PWD}/www`
                     app.use(vhost(hosts[i].host, async (req, res) =>
                     {
                         res.sendFile(`${global.APP_PATH}/index.html`)
@@ -79,6 +83,7 @@ class SNWS
                 }
                 else
                 {
+                    global.APP_PATH = this.hosts[hosts[i].host].APP_PATH || `${process.env.PWD}/www`
                     app.use(vhost(hosts[i].host, async (req, res) =>
                     {
                         res.setHeader('Content-Type', 'text/plain')
