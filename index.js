@@ -8,6 +8,10 @@ import http from 'http'
 import fileUpload from 'express-fileupload'
 import mustache from  'mustache'
 import fs from 'fs'
+import socketio from 'socket.io'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const app = new express()
 const _app = new express()
@@ -16,8 +20,8 @@ class SNWS
 {
     constructor ()
     {
-
         this.init()
+        this.sockets = []
     }
 
     async get_vhosts ()
@@ -39,7 +43,6 @@ class SNWS
 
     async init()
     {
-
         const hosts = await this.get_vhosts() || []
 
         try
@@ -55,54 +58,65 @@ class SNWS
 
             for ( let i = 0; i < hosts.length; i ++ )
             {
-                app.use(vhost(hosts[i].host, async (req, res) =>
+                global.APP_PATH = hosts[i].APP_PATH || `${process.env.PWD}/www`
+                if ( await fs.existsSync(`${global.APP_PATH}/index.js`) )
                 {
-                    global.APP_PATH = hosts[i].APP_PATH || `${process.env.PWD}/www`
-
-                    if ( await fs.existsSync(`${global.APP_PATH}/index.js`) )
+                    let { Index, Socket } = await import(`${global.APP_PATH}/index.js`)
+                    app.use(vhost(hosts[i].host, async (req, res) =>
                     {
-                        try
-                        {
-                            let Index = await import(`${global.APP_PATH}/index.js`)
-                            if ( Index.default )
-                                Index = Index.default
+                        res.setHeader('Content-Type', 'text/plain')
+                        res.end(await new Index(req, res, app))
+                    }))
 
-                            res.setHeader('Content-Type', 'text/plain')
-                            res.end(await new Index(req, res, app))
-                        }
-                        catch ( e )
-                        {
-                            console.log ( e )
-                        }
-                    }
-                    else if ( await fs.existsSync(`${global.APP_PATH}/index.html`) )
+                    this.sockets.push(Socket)
+                }
+                else if ( await fs.existsSync(`${global.APP_PATH}/index.html`) )
+                {
+                    app.use(vhost(hosts[i].host, async (req, res) =>
                     {
                         res.sendFile(`${global.APP_PATH}/index.html`)
-                    }
-                    else
+                    }))
+                }
+                else
+                {
+                    app.use(vhost(hosts[i].host, async (req, res) =>
                     {
                         res.setHeader('Content-Type', 'text/plain')
                         res.end(`No index file!`)
-                    }
-                }))
+                    }))
+                }
             }
 
+            if ( process.env.ssl === `true` )
+            {
+                var server = https.createServer({}, app)
 
-            const server = https.createServer({}, app)
+                for ( let i = 0; i < hosts.length; i ++ )
+                {
+                    server.addContext(hosts[i].host, {
+                        key: fs.readFileSync(hosts[i].ssl_key),
+                        cert: fs.readFileSync(hosts[i].ssl_cert)
+                    })
+                }
 
-            for ( let i = 0; i < hosts.length; i ++ )
-	    {
-                server.addContext(hosts[i].host, {
-                    key: fs.readFileSync(hosts[i].ssl_key),
-                    cert: fs.readFileSync(hosts[i].ssl_cert)
-                })
-	    }
+                _app.all(`*`, (req, res) => res.redirect("https://" + req.host + req.url))
 
-	    _app.all(`*`, (req, res) => res.redirect("https://" + req.host + req.url))
+                _app.listen(80)
 
-	    _app.listen(80)
+                server.listen(443)
+            }
+            else
+            {
+                var server = http.createServer(app)
+                server.listen(80)
+            }
 
-            server.listen(443)
+            global.io = socketio(server)
+
+            global.io.on(`connection`, (arg) => {})
+
+            for ( let i = 0; i < this.sockets.length; i ++ )
+                new this.sockets[i]()
         }
         catch ( e )
         {
