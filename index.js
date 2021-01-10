@@ -60,12 +60,14 @@ class SNWS
             for ( let i = 0; i < hosts.length; i ++ )
             {
                 this.hosts[hosts[i].host] = hosts[i]
+
                 if ( await fs.existsSync(`${this.hosts[hosts[i].host].APP_PATH}/index.js`) )
                 {
                     global.APP_PATH = this.hosts[hosts[i].host].APP_PATH || `${process.env.PWD}/www`
-                    let { Index, Socket } = await import(`${global.APP_PATH}/index.js`)
+                    let { Index, Socket } = await import(`${this.hosts[hosts[i].host].APP_PATH}/index.js`)
                     app.use(vhost(hosts[i].host, async (req, res) =>
                     {
+                        global.APP_PATH = this.hosts[hosts[i].host].APP_PATH || `${process.env.PWD}/www`
                         res.setHeader('Content-Type', 'text/plain')
                         res.end(await new Index(req, res, app))
                     }))
@@ -74,21 +76,21 @@ class SNWS
                 }
                 else if ( await fs.existsSync(`${this.hosts[hosts[i].host].APP_PATH}/index.html`) )
                 {
-                    global.APP_PATH = this.hosts[hosts[i].host].APP_PATH || `${process.env.PWD}/www`
                     app.use(vhost(hosts[i].host, async (req, res) =>
                     {
+                        global.APP_PATH = this.hosts[hosts[i].host].APP_PATH || `${process.env.PWD}/www`
                         res.sendFile(`${global.APP_PATH}/index.html`)
                     }))
                 }
-                // else
-                // {
-                //     // global.APP_PATH = `${process.env.PWD}/www`
-                //     app.use(vhost(hosts[i].host, async (req, res) =>
-                //     {
-                //         res.setHeader('Content-Type', 'text/plain')
-                //         res.end(`No index file!`)
-                //     }))
-                // }
+                else
+                {
+                    app.use(vhost(hosts[i].host, async (req, res) =>
+                    {
+                        global.APP_PATH = this.hosts[hosts[i].host].APP_PATH || `${process.env.PWD}/www`
+                        res.setHeader('Content-Type', 'text/plain')
+                        res.end(`No index file!`)
+                    }))
+                }
             }
 
             if ( process.env.ssl === `true` )
