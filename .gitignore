@@ -3,3 +3,5 @@ node_modules/
 storage/logs/
 vhosts.json
 .env
+certs/
+dns/
