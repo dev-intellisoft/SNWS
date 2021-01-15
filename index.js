@@ -16,6 +16,22 @@ dotenv.config()
 const app = new express()
 const _app = new express()
 
+global.server = { get:() => {} }
+
+class Server
+{
+    constructor ( variables )
+    {
+        // console.log ( variables )
+        this.variables = variables
+    }
+
+    get ( key )
+    {
+        return this.variables[key]
+    }
+}
+
 class SNWS
 {
     constructor ()
@@ -64,9 +80,11 @@ class SNWS
                 if ( await fs.existsSync(`${this.hosts[hosts[i].host].APP_PATH}/index.js`) )
                 {
                     global.APP_PATH = this.hosts[hosts[i].host].APP_PATH || `${process.env.PWD}/www`
+                    global.server = await new Server(this.hosts[hosts[i].host])
                     let { Index, Socket } = await import(`${this.hosts[hosts[i].host].APP_PATH}/index.js`)
                     app.use(vhost(hosts[i].host, async (req, res) =>
                     {
+                        global.server = await new Server(this.hosts[hosts[i].host])
                         global.APP_PATH = this.hosts[hosts[i].host].APP_PATH || `${process.env.PWD}/www`
                         res.setHeader('Content-Type', 'text/plain')
                         res.end(await new Index(req, res, app))
@@ -78,6 +96,7 @@ class SNWS
                 {
                     app.use(vhost(hosts[i].host, async (req, res) =>
                     {
+                        global.server = await new Server(this.hosts[hosts[i].host])
                         global.APP_PATH = this.hosts[hosts[i].host].APP_PATH || `${process.env.PWD}/www`
                         res.sendFile(`${global.APP_PATH}/index.html`)
                     }))
@@ -86,6 +105,7 @@ class SNWS
                 {
                     app.use(vhost(hosts[i].host, async (req, res) =>
                     {
+                        global.server = await new Server(this.hosts[hosts[i].host])
                         global.APP_PATH = this.hosts[hosts[i].host].APP_PATH || `${process.env.PWD}/www`
                         res.setHeader('Content-Type', 'text/plain')
                         res.end(`No index file!`)
