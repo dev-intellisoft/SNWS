@@ -73,7 +73,7 @@ class SNWS
                         scriptSrc: ["'self'"],
                         styleSrc: ["'self'", 'https://fonts.googleapis.com', "'unsafe-inline'"],
                         imgSrc: ["'self'", 'data:'],
-                        connectSrc: ["'self'", 'dev-api.programer.com.br/',
+                        connectSrc: ["'self'", 'api.programer.com.br/',
                             'https://api.programer.com.br/',
                             'wss://api.programer.com.br/'],
                         fontSrc: ["'self'", 'https://fonts.gstatic.com'],
