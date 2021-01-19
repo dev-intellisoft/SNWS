@@ -74,12 +74,12 @@ class SNWS
                         styleSrc: ["'self'", 'https://fonts.googleapis.com', "'unsafe-inline'"],
                         imgSrc: ["'self'", 'data:'],
                         connectSrc: ["'self'", 'dev-api.programer.com.br/',
-                            'https://dev-api.programer.com.br/',
-                            'wss://dev-api.programer.com.br/'],
+                            'https://api.programer.com.br/',
+                            'wss://api.programer.com.br/'],
                         fontSrc: ["'self'", 'https://fonts.gstatic.com'],
                         objectSrc: ["'self'"],
                         mediaSrc: ["'self'"],
-                        frameSrc: ["'self'", "dev-api.programer.com.br"],
+                        frameSrc: ["'self'", "api.programer.com.br"],
                     },
                 }
             }))
