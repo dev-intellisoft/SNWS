@@ -26,10 +26,7 @@ class Server
         this.variables = variables
     }
 
-    get ( key )
-    {
-        return this.variables[key]
-    }
+    get = ( key ) => this.variables[key]
 }
 
 class SNWS
@@ -41,7 +38,7 @@ class SNWS
         this.hosts = {}
     }
 
-    async get_vhosts ()
+    get_vhosts = async () =>
     {
         try
         {
@@ -58,6 +55,8 @@ class SNWS
         }
     }
 
+    static_vhosts = async (domain, dir) => vhost(domain, express.static( dir ))
+
     async init()
     {
         const hosts = await this.get_vhosts() || []
@@ -67,9 +66,25 @@ class SNWS
             app.use(bodyParser.json())
             app.use(bodyParser.text())
             app.use(bodyParser.urlencoded({extended: false}))
-            app.use(helmet())
+            app.use(helmet({
+                contentSecurityPolicy: {
+                    directives: {
+                        defaultSrc: ["'self'"],
+                        scriptSrc: ["'self'"],
+                        styleSrc: ["'self'", 'https://fonts.googleapis.com', "'unsafe-inline'"],
+                        imgSrc: ["'self'", 'data:'],
+                        connectSrc: ["'self'", 'dev-api.programer.com.br/',
+                            'https://dev-api.programer.com.br/',
+                            'wss://dev-api.programer.com.br/'],
+                        fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+                        objectSrc: ["'self'"],
+                        mediaSrc: ["'self'"],
+                        frameSrc: ["'self'", "dev-api.programer.com.br"],
+                    },
+                }
+            }))
             app.disable(`x-powered-by`)
-            app.set(`trust_proxy`, true);
+            app.set(`trust_proxy`, true)
             app.use(cors())
             app.use(fileUpload())
 
@@ -94,6 +109,8 @@ class SNWS
                 }
                 else if ( await fs.existsSync(`${this.hosts[hosts[i].host].APP_PATH}/index.html`) )
                 {
+                    app.use(await this.static_vhosts( hosts[i].host, this.hosts[hosts[i].host].APP_PATH))
+
                     app.use(vhost(hosts[i].host, async (req, res) =>
                     {
                         global.server = await new Server(this.hosts[hosts[i].host])
