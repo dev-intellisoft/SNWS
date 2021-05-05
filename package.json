@@ -1,12 +1,13 @@
 {
   "name": "SNWS",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "main": "index.js",
   "license": "MIT",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "INLINE_RUNTIME_CHUNK=false ENV_TYPE='development'  nodemon  -w index.js -w socket.js -w controllers -w models -w libs --exec \"node --es-module-specifier-resolution=node --unhandled-rejections=none index.js\"",
+    "prod": "node --es-module-specifier-resolution=node --unhandled-rejections=none index.js",
     "run-server": "supervisor -i . server.js"
   },
   "dependencies": {
