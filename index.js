@@ -10,7 +10,6 @@ import mustache from  'mustache'
 import fs from 'fs'
 import socketio from 'socket.io'
 import dotenv from 'dotenv'
-import { createProxyMiddleware } from 'http-proxy-middleware'
 import proxy from 'express-http-proxy'
 
 dotenv.config()
@@ -96,23 +95,7 @@ class SNWS
 
                 if( this.hosts[hosts[i].host].proxy )
                 {
-                    // app.use()
-                    // createProxyMiddleware
-                    // app.createServer(
-                    // {
-                    //     target: { host: this.hosts[hosts[i].host].redirect, port: this.hosts[hosts[i].host].port },
-                        // ssl: {
-                        //     key: fs.readFileSync(
-                        //         '/etc/letsencrypt/live/testnet.doric.network/privkey.pem', 'utf8'),
-                        //     cert: fs.readFileSync(
-                        //         '/etc/letsencrypt/live/testnet.doric.network/fullchain.pem', 'utf8')
-                        // }
-                    // })
-
-                    //app.use(vhost(hosts[i].host, async () => await createProxyMiddleware(`/`, {
-                    //    target:this.hosts[hosts[i].host].redirect + `:` + this.hosts[hosts[i].host].port 
-                    //})))
-		    app.use(vhost(hosts[i].host, proxy(`${this.hosts[hosts[i].host].redirect}:${this.hosts[hosts[i].host].port}`)))
+        		    app.use(vhost(hosts[i].host, proxy(`${this.hosts[hosts[i].host].redirect}:${this.hosts[hosts[i].host].port}`)))
                 }
                 else if ( await fs.existsSync(`${this.hosts[hosts[i].host].APP_PATH}/index.js`) )
                 {
