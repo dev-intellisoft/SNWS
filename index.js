@@ -11,6 +11,7 @@ import fs from 'fs'
 import socketio from 'socket.io'
 import dotenv from 'dotenv'
 import { createProxyMiddleware } from 'http-proxy-middleware'
+import proxy from 'express-http-proxy'
 
 dotenv.config()
 
@@ -51,6 +52,7 @@ class SNWS
         }
         catch ( e )
         {
+	    console.log(e)
             return []
         }
     }
@@ -106,11 +108,11 @@ class SNWS
                         //         '/etc/letsencrypt/live/testnet.doric.network/fullchain.pem', 'utf8')
                         // }
                     // })
-                    console.log(this.hosts[hosts[i].host].redirect)
 
-                    app.use(vhost(hosts[i].host, createProxyMiddleware(`/`,{
-                        target:this.hosts[hosts[i].host].redirect
-                    })))
+                    //app.use(vhost(hosts[i].host, async () => await createProxyMiddleware(`/`, {
+                    //    target:this.hosts[hosts[i].host].redirect + `:` + this.hosts[hosts[i].host].port 
+                    //})))
+		    app.use(vhost(hosts[i].host, proxy(`${this.hosts[hosts[i].host].redirect}:${this.hosts[hosts[i].host].port}`)))
                 }
                 else if ( await fs.existsSync(`${this.hosts[hosts[i].host].APP_PATH}/index.js`) )
                 {
@@ -162,7 +164,7 @@ class SNWS
                     })
                 }
 
-                _app.all(`*`, (req, res) => res.redirect("https://" + req.host + req.url))
+                _app.all(`*`, (req, res) => res.redirect("https://" + req.hostname + req.url))
 
                 _app.listen(80)
 
@@ -183,6 +185,7 @@ class SNWS
         }
         catch ( e )
         {
+	    console.log(e)
             console.log ( e )
         }
     }
