@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "INLINE_RUNTIME_CHUNK=false ENV_TYPE='development'  nodemon  -w index.js -w socket.js -w controllers -w models -w libs --exec \"node --es-module-specifier-resolution=node --unhandled-rejections=none index.js\"",
-    "prod": "node --es-module-specifier-resolution=node --unhandled-rejections=none index.js",
+    "dev": "INLINE_RUNTIME_CHUNK=false ENV_TYPE='development'  nodemon  -w index.js -w socket.js -w controllers -w models -w libs --exec \"node --es-module-specifier-resolution=node --trace-warnings --unhandled-rejections=none index.js\"",
+    "prod": "node --trace-warnings --es-module-specifier-resolution=node --unhandled-rejections=none index.js",
     "run-server": "supervisor -i . server.js"
   },
   "dependencies": {
@@ -16,6 +16,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.0",
+    "express-http-proxy": "^1.6.2",
     "helmet": "^4.3.1",
     "http": "^0.0.1-security",
     "http-proxy-middleware": "^1.3.1",
@@ -24,7 +25,8 @@
     "nodemon": "^2.0.6",
     "socket.io": "^2.3.0",
     "spdy": "^4.0.2",
-    "vhost": "^3.0.2"
+    "vhost": "^3.0.2",
+    "yarn": "^1.22.10"
   },
   "description": "Simple Node Web Server",
   "author": "Wellington Cuha"
