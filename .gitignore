@@ -5,3 +5,4 @@ vhosts.json
 .env
 certs/
 dns/
+test/

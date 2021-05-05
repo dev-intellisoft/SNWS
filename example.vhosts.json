@@ -13,4 +13,9 @@
     "ssl_key":"/usr/local/etc/letsencrypt/live/domain2.com/privkey.pem",
     "ssl_cert":"/usr/local/etc/letsencrypt/live/domain2.com/fullchain.pem"
   },
+  {
+    "host": "test",
+    "proxy": true,
+    "redirect": "http://localhost:8081"
+  }
 ]

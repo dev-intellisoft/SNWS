@@ -10,6 +10,7 @@ import mustache from  'mustache'
 import fs from 'fs'
 import socketio from 'socket.io'
 import dotenv from 'dotenv'
+import { createProxyMiddleware } from 'http-proxy-middleware'
 
 dotenv.config()
 
@@ -22,7 +23,6 @@ class Server
 {
     constructor ( variables )
     {
-        // console.log ( variables )
         this.variables = variables
     }
 
@@ -92,7 +92,27 @@ class SNWS
             {
                 this.hosts[hosts[i].host] = hosts[i]
 
-                if ( await fs.existsSync(`${this.hosts[hosts[i].host].APP_PATH}/index.js`) )
+                if( this.hosts[hosts[i].host].proxy )
+                {
+                    // app.use()
+                    // createProxyMiddleware
+                    // app.createServer(
+                    // {
+                    //     target: { host: this.hosts[hosts[i].host].redirect, port: this.hosts[hosts[i].host].port },
+                        // ssl: {
+                        //     key: fs.readFileSync(
+                        //         '/etc/letsencrypt/live/testnet.doric.network/privkey.pem', 'utf8'),
+                        //     cert: fs.readFileSync(
+                        //         '/etc/letsencrypt/live/testnet.doric.network/fullchain.pem', 'utf8')
+                        // }
+                    // })
+                    console.log(this.hosts[hosts[i].host].redirect)
+
+                    app.use(vhost(hosts[i].host, createProxyMiddleware(`/`,{
+                        target:this.hosts[hosts[i].host].redirect
+                    })))
+                }
+                else if ( await fs.existsSync(`${this.hosts[hosts[i].host].APP_PATH}/index.js`) )
                 {
                     global.APP_PATH = this.hosts[hosts[i].host].APP_PATH || `${process.env.PWD}/www`
                     global.server = await new Server(this.hosts[hosts[i].host])
